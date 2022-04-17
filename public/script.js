@@ -7,7 +7,7 @@ const height = (canvas.height = window.innerHeight);
 const ctx = canvas.getContext("2d");
 ctx.lineWidth = 2;
 
-const [minCharge, maxCharge] = [-2, 2];
+const maxCharge = 3;
 
 const charges = [
   new PointCharge(width / 2 - 200, height / 2, 4),
@@ -53,7 +53,7 @@ const visualizePotential = (res = 5) => {
 };
 
 /** Visualize the electric field at every point. */
-const visualizeField = (res = 50) => {
+const visualizeField = (res = 35) => {
   let maxE = 0;
   let E = new Array(width);
   for (let x = 0; x < width; x++) E[x] = new Array(height);
@@ -135,11 +135,22 @@ canvas.addEventListener(
   "click",
   (e) => {
     charges.push(
-      new PointCharge(
-        e.clientX,
-        e.clientY,
-        Math.random() * (maxCharge - minCharge) + minCharge
-      )
+      new PointCharge(e.clientX, e.clientY, Math.random() * maxCharge)
+    );
+
+    clearCanvas();
+    visualizePotential();
+    visualizeField();
+  },
+  false
+);
+
+canvas.addEventListener(
+  "contextmenu",
+  (e) => {
+    e.preventDefault();
+    charges.push(
+      new PointCharge(e.clientX, e.clientY, -1 * Math.random() * maxCharge)
     );
 
     clearCanvas();
