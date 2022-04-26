@@ -2,10 +2,21 @@ import { PointCharge, Physics } from "./util.js";
 
 const canvas = document.querySelector(".myCanvas");
 const width = (canvas.width = window.innerWidth);
-const height = (canvas.height = window.innerHeight);
+const height = (canvas.height = window.innerHeight - 100);
 
 const ctx = canvas.getContext("2d");
 ctx.lineWidth = 2;
+
+const slider = document.getElementById("chargeRange");
+const label = document.querySelector("label[for='chargeRange']");
+slider.oninput = function () {
+  label.innerHTML = `${this.value * maxCharge} Coulombs`;
+  console.log(slider.value);
+};
+window.addEventListener("load", function () {
+  //label.innerHTML = `${slider.value * maxCharge} Coulombs`;
+  console.log(slider.value);
+});
 
 const maxCharge = 3;
 
@@ -53,7 +64,7 @@ const visualizePotential = (res = 5) => {
 };
 
 /** Visualize the electric field at every point. */
-const visualizeField = (res = 35) => {
+const visualizeField = (res = 20) => {
   let maxE = 0;
   let E = new Array(width);
   for (let x = 0; x < width; x++) E[x] = new Array(height);
@@ -135,22 +146,7 @@ canvas.addEventListener(
   "click",
   (e) => {
     charges.push(
-      new PointCharge(e.clientX, e.clientY, Math.random() * maxCharge)
-    );
-
-    clearCanvas();
-    visualizePotential();
-    visualizeField();
-  },
-  false
-);
-
-canvas.addEventListener(
-  "contextmenu",
-  (e) => {
-    e.preventDefault();
-    charges.push(
-      new PointCharge(e.clientX, e.clientY, -1 * Math.random() * maxCharge)
+      new PointCharge(e.clientX, e.clientY, slider.value * maxCharge)
     );
 
     clearCanvas();
