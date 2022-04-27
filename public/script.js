@@ -35,7 +35,7 @@ const visualizePotential = (res = 5) => {
         ? charges
             .map((charge) => Physics.electric_potential(charge, { x, y }))
             .reduce((prev, cur) => prev + cur)
-        : 1;
+        : 0;
 
       // Take the square root so it there is more variation
       v = v > 0 ? Math.pow(v, 0.5) : -1 * Math.pow(-1 * v, 0.5);
