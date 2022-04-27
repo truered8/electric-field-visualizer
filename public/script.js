@@ -15,7 +15,7 @@ const isMobile = window.matchMedia(
 console.log(isMobile);
 
 const charges = isMobile
-  ? []
+  ? [new PointCharge(width / 2, height / 2, 4)]
   : [
       new PointCharge(width / 2 - 200, height / 2, 4),
       new PointCharge(width / 2 + 200, height / 2, -5),
@@ -100,7 +100,8 @@ const visualizeField = (res = 35) => {
     for (let y = 0; y < height; y += res) {
       const ef_magnitude = Math.hypot(E[x][y].x, E[x][y].y);
 
-      const brightness = Math.abs(ef_magnitude / (maxE / 10));
+      const scaleFactor = isMobile ? 5 : 10;
+      const brightness = Math.abs(ef_magnitude / (maxE / scaleFactor));
       const [dx, dy] = [E[x][y].x / ef_magnitude, E[x][y].y / ef_magnitude];
       const [fromx, fromy, tox, toy] = [
         x + res / 2 - dx,
