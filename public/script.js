@@ -15,7 +15,7 @@ const isMobile = window.matchMedia(
 console.log(isMobile);
 
 const charges = isMobile
-  ? [new PointCharge(width / 2, height / 2, 4)]
+  ? [new PointCharge(width / 2, height / 2, 1)]
   : [
       new PointCharge(width / 2 - 200, height / 2, 4),
       new PointCharge(width / 2 + 200, height / 2, -5),
