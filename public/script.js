@@ -9,11 +9,18 @@ ctx.lineWidth = 2;
 
 const maxCharge = 3;
 
-const charges = [
-  new PointCharge(width / 2 - 200, height / 2, 4),
-  new PointCharge(width / 2 + 200, height / 2, -5),
-  new PointCharge(width / 2 + 200, height / 2 - 100, 2),
-];
+const isMobile = window.matchMedia(
+  "only screen and (max-width: 760px)"
+).matches;
+console.log(isMobile);
+
+const charges = isMobile
+  ? []
+  : [
+      new PointCharge(width / 2 - 200, height / 2, 4),
+      new PointCharge(width / 2 + 200, height / 2, -5),
+      new PointCharge(width / 2 + 200, height / 2 - 100, 2),
+    ];
 
 /** Draw a heat map of the electric potential at every point. */
 const visualizePotential = (res = 5) => {
@@ -24,9 +31,11 @@ const visualizePotential = (res = 5) => {
   // Calculate the potential at every point using superposition
   for (let x = 0; x < width; x += res) {
     for (let y = 0; y < height; y += res) {
-      let v = charges
-        .map((charge) => Physics.electric_potential(charge, { x, y }))
-        .reduce((prev, cur) => prev + cur);
+      let v = charges.length
+        ? charges
+            .map((charge) => Physics.electric_potential(charge, { x, y }))
+            .reduce((prev, cur) => prev + cur)
+        : 1;
 
       // Take the square root so it there is more variation
       v = v > 0 ? Math.pow(v, 0.5) : -1 * Math.pow(-1 * v, 0.5);
@@ -39,8 +48,9 @@ const visualizePotential = (res = 5) => {
   // Draw the potential, scaling based on the max potential
   for (let x = 0; x < width; x += res) {
     for (let y = 0; y < height; y += res) {
+      const scaleFactor = isMobile ? 5 : 15;
       const brightness = isFinite(V[x][y])
-        ? Math.abs(V[x][y] / (maxV / 15))
+        ? Math.abs(V[x][y] / (maxV / scaleFactor))
         : 1;
       ctx.fillStyle =
         V[x][y] > 0
@@ -134,9 +144,9 @@ const clearCanvas = () => {
 canvas.addEventListener(
   "click",
   (e) => {
-    charges.push(
-      new PointCharge(e.clientX, e.clientY, Math.random() * maxCharge)
-    );
+    let newCharge = Math.random() * maxCharge;
+    if (isMobile) newCharge = (newCharge * 2 - maxCharge) * 0.4;
+    charges.push(new PointCharge(e.clientX, e.clientY, newCharge));
 
     clearCanvas();
     visualizePotential();
@@ -149,9 +159,8 @@ canvas.addEventListener(
   "contextmenu",
   (e) => {
     e.preventDefault();
-    charges.push(
-      new PointCharge(e.clientX, e.clientY, -1 * Math.random() * maxCharge)
-    );
+    const newCharge = -1 * Math.random() * maxCharge;
+    charges.push(new PointCharge(e.clientX, e.clientY, newCharge));
 
     clearCanvas();
     visualizePotential();
