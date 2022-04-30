@@ -6,7 +6,7 @@ export class PointCharge {
   }
 }
 
-export class Physics {
+export class EM {
   /** Relative permittivity of free space. */
   static epsilon_0 = 8.8541878128e-12;
 
